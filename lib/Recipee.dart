@@ -8,14 +8,11 @@ class Recipee {
 
   Recipee({this.name, this.ingredients});
 
-
   factory Recipee.fromJson(Map<String, dynamic> json) {
     var ingList = json['ingredients'] as List;
-    List<Ingredient> ingredients = ingList.map((i) => Ingredient.fromJson(i)).toList();
-    return new Recipee(
-        name: json['name'] as String,
-        ingredients: ingredients
-      );
+    List<Ingredient> ingredients =
+        ingList.map((i) => Ingredient.fromJson(i)).toList();
+    return new Recipee(name: json['name'] as String, ingredients: ingredients);
   }
 }
 
@@ -35,32 +32,72 @@ class RecipeeWidget extends StatelessWidget {
             image: DecorationImage(
                 image: AssetImage("background.jpg"), fit: BoxFit.cover),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Cantidad (grs)',
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    WhitelistingTextInputFormatter.digitsOnly
-                  ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text("HOLA"),
                 ),
-                TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Cantidad (grs)',
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    WhitelistingTextInputFormatter.digitsOnly
-                  ],
-                )
-              ],
-            ),
+              ),
+              Expanded(
+                              child: FutureBuilder(builder: (context, snapshot) {
+                  return ingredients.isNotEmpty
+                      ? new IngredientsList(ingredients: ingredients)
+                      : new Center(child: new CircularProgressIndicator());
+                }),
+              ),
+            ],
           ),
+          /*child: Padding(
+                                  padding: const EdgeInsets.all(30.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    /*children: <Widget>[
+                                      TextField(
+                                        decoration: const InputDecoration(
+                                          labelText: 'Cantidad (grs)',
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          WhitelistingTextInputFormatter.digitsOnly
+                                        ],
+                                      ),
+                                      TextField(
+                                        decoration: const InputDecoration(
+                                          labelText: 'Cantidad (grs)',
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          WhitelistingTextInputFormatter.digitsOnly
+                                        ],
+                                      )
+                                    ],*/
+                                  ),
+                                ),*/
         ));
   }
+}
+
+class IngredientsList extends StatelessWidget{
+  final List<Ingredient> ingredients;
+
+  IngredientsList({this.ingredients});
+
+  @override
+  Widget build(BuildContext context) {
+    return new ListView.builder(
+        itemCount: ingredients == null ? 0 : ingredients.length,
+        itemBuilder: (BuildContext context, int index) {
+          return new ListTile(
+              title: Text(ingredients[index].name),
+              trailing: Text(ingredients[index].quantity.toString()),
+          );
+        });
+  
+  }
+
+
 }

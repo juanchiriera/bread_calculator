@@ -4,11 +4,24 @@
     "ingredients": [
         {
             "name": "harina",
-            "qty": "134.0"
+            "qty": 134.0
         },
         {
             "name": "agua",
-            "qty": "15"
+            "qty": 15.0
+        }
+    ]
+},
+{
+    "name": "pan 2",
+    "ingredients": [
+        {
+            "name": "harina",
+            "qty": 134.0
+        },
+        {
+            "name": "agua",
+            "qty": 15.0
         }
     ]
 }

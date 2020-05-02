@@ -44,11 +44,6 @@ class _MyHomePageState extends State<Home> {
                 )));
   }
 
-  Future selectItem({title}) async {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => RecipeeWidget()));
-  }
-
   List<Recipee> parseJson(String response) {
     if (response == null) {
       return [];
@@ -68,16 +63,11 @@ class RecipeeList extends StatelessWidget {
     return new ListView.builder(
         itemCount: recipees == null ? 0 : recipees.length,
         itemBuilder: (BuildContext context, int index) {
-          return new Container(
-            child: new Center(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  new Text(recipees[index].name),
-                  new Icon(Icons.edit)
-                ],
-              ),
-            ),
+          return new ListTile(
+              title: Text(recipees[index].name),
+              trailing: 
+                  new Icon(Icons.edit),
+              onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeeWidget(name: recipees[index].name, ingredients: recipees[index].ingredients,)));}
           );
         });
   }
