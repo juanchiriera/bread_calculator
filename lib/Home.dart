@@ -32,16 +32,44 @@ class _MyHomePageState extends State<Home> {
               image: DecorationImage(
                   image: AssetImage("background.jpg"), fit: BoxFit.cover),
             ),
-            child: FutureBuilder(
-                future: DefaultAssetBundle.of(context)
-                    .loadString('assets/recipees.json'),
-                builder: (context, snapshot) {
-                  List<Recipee> recipees = parseJson(snapshot.data.toString());
-                  return recipees.isNotEmpty
-                      ? new RecipeeList(recipees: recipees)
-                      : new Center(child: new CircularProgressIndicator());
-                } // This trailing comma makes auto-formatting nicer for build methods.
-                )));
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 10,
+                    left: 100,
+                    right: 100,
+                    top: 50
+                  ),
+                  child: Container(
+                    width: 30.0,
+                    height: 130.0,
+                    decoration: new BoxDecoration(
+                      image: DecorationImage(
+                        image: new AssetImage('assets/appLogo.png'),
+                        fit: BoxFit.fitHeight,
+                      ),
+                      //shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: FutureBuilder(
+                      future: DefaultAssetBundle.of(context)
+                          .loadString('assets/recipees.json'),
+                      builder: (context, snapshot) {
+                        List<Recipee> recipees =
+                            parseJson(snapshot.data.toString());
+                        return recipees.isNotEmpty
+                            ? new RecipeeList(recipees: recipees)
+                            : new Center(
+                                child: new CircularProgressIndicator());
+                      } // This trailing comma makes auto-formatting nicer for build methods.
+                      ),
+                ),
+              ],
+            )));
   }
 
   List<Recipee> parseJson(String response) {
@@ -49,7 +77,7 @@ class _MyHomePageState extends State<Home> {
       return [];
     }
     final decoded = json.decode(response);
-    return  decoded.map<Recipee>((json) => Recipee.fromJson(json)).toList();
+    return decoded.map<Recipee>((json) => Recipee.fromJson(json)).toList();
   }
 }
 
@@ -63,11 +91,37 @@ class RecipeeList extends StatelessWidget {
     return new ListView.builder(
         itemCount: recipees == null ? 0 : recipees.length,
         itemBuilder: (BuildContext context, int index) {
-          return new ListTile(
-              title: Text(recipees[index].name),
-              trailing: 
-                  new Icon(Icons.edit),
-              onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeeWidget(name: recipees[index].name, ingredients: recipees[index].ingredients,)));}
+          return Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                boxShadow: [BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 3,
+                  spreadRadius: 3,
+                  offset: Offset(3, 3)
+
+                )],
+                color: Colors.white.withAlpha(215)
+              ),
+              child: new ListTile(
+                  title: Text(
+                    recipees[index].name,
+                    style: TextStyle(
+                      fontSize: 25
+                    ),),
+                  //trailing: new Icon(Icons.edit),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RecipeeWidget(
+                                  name: recipees[index].name,
+                                  ingredients: recipees[index].ingredients,
+                                )));
+                  }),
+            ),
           );
         });
   }

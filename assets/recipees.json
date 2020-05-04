@@ -1,27 +1,63 @@
 [
 {
-    "name": "pan 1",
+    "name": "Pan de Masa Madre",
     "ingredients": [
         {
-            "name": "harina",
-            "qty": 134.0
+            "name": "Masa madre Natural",
+            "qty": 150.0
         },
         {
-            "name": "agua",
-            "qty": 15.0
+            "name": "Harina",
+            "qty": 500.0
+        },
+        {
+            "name": "Agua",
+            "qty": 310.0
+        },
+        {
+            "name": "Sal",
+            "qty": 10.0
         }
     ]
 },
 {
-    "name": "pan 2",
+    "name": "Pan de Pita",
     "ingredients": [
         {
-            "name": "harina",
-            "qty": 134.0
+            "name": "Harina",
+            "qty": 300.0
         },
         {
-            "name": "agua",
-            "qty": 15.0
+            "name": "Levadura fresca",
+            "qty": 12.0
+        },
+        {
+            "name": "Sal",
+            "qty": 10.0
+        },
+        {
+            "name": "Azucar",
+            "qty": 5.0
+        },
+        {
+            "name": "Agua tibia",
+            "qty": 160.0
+        },
+        {
+            "name": "Aceite de Oliva",
+            "qty": 20.0
+        },
+        {
+            "name": "Azucar",
+            "qty": 5.0
+        },
+        {
+            "name": "Agua tibia",
+            "qty": 160.0
+        },
+        {
+            "name": "Aceite de Oliva",
+            "qty": 20.0
         }
     ]
 }
