@@ -4,15 +4,15 @@
     "ingredients": [
         {
             "name": "Masa madre Natural",
-            "qty": 150.0
+            "qty": 15.0
         },
         {
             "name": "Harina",
-            "qty": 500.0
+            "qty": 50.0
         },
         {
             "name": "Agua",
-            "qty": 310.0
+            "qty": 30.0
         },
         {
             "name": "Sal",
@@ -25,7 +25,7 @@
     "ingredients": [
         {
             "name": "Harina",
-            "qty": 300.0
+            "qty": 60.0
         },
         {
             "name": "Levadura fresca",
@@ -41,7 +41,7 @@
         },
         {
             "name": "Agua tibia",
-            "qty": 160.0
+            "qty": 30.0
         },
         {
             "name": "Aceite de Oliva",
@@ -50,14 +50,6 @@
         {
             "name": "Azucar",
             "qty": 5.0
-        },
-        {
-            "name": "Agua tibia",
-            "qty": 160.0
-        },
-        {
-            "name": "Aceite de Oliva",
-            "qty": 20.0
         }
     ]
 }

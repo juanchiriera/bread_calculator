@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'Constant.dart';
 
-import 'package:calculadora_de_pan/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+
+import 'utils/Constant.dart';
+import 'views/Home.dart';
 
 void main() => runApp(MyApp());
 
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.white,
       ),
       routes: <String, WidgetBuilder>{
         HOME_SCREEN: (BuildContext context) => new Home(
