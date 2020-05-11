@@ -17,9 +17,14 @@ class RecipeeView extends StatefulWidget {
 class _RecipeeViewState extends State<RecipeeView> {
   double _quantity = 1000;
 
+  callback(newQuantity){
+    setState(() {
+      _quantity = newQuantity;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     TextEditingController quantityController =
         new TextEditingController(text: _quantity.toStringAsFixed(0));
     return Scaffold(
@@ -92,7 +97,7 @@ class _RecipeeViewState extends State<RecipeeView> {
               Expanded(
                 child: FutureBuilder(builder: (context, snapshot) {
                   return new IngredientsView(
-                      ingredients: widget.ingredients, quantity: _quantity);
+                      ingredients: widget.ingredients, quantity: _quantity, callback: callback);
                 }),
               ),
             ],
