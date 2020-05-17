@@ -1,8 +1,13 @@
+import 'dart:js';
+
 import 'package:calculadora_de_pan/model/Ingredient.dart';
 import 'package:calculadora_de_pan/model/Recipee.dart';
+import 'package:calculadora_de_pan/utils/DbHelper.dart';
 import 'package:calculadora_de_pan/utils/DecimalTextInputFormatter.dart';
 import 'package:calculadora_de_pan/views/IngredientsView.dart';
 import 'package:flutter/material.dart';
+
+import 'CreateRecipeeView.dart';
 
 class RecipeeView extends StatefulWidget {
   final String name;
@@ -17,7 +22,7 @@ class RecipeeView extends StatefulWidget {
 class _RecipeeViewState extends State<RecipeeView> {
   double _quantity = 1000;
 
-  callback(newQuantity){
+  callback(newQuantity) {
     setState(() {
       _quantity = newQuantity;
     });
@@ -77,9 +82,7 @@ class _RecipeeViewState extends State<RecipeeView> {
                                   suffix: Text("grs"),
                                   labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(fontSize: 32.0),
-                              inputFormatters: [
-                                DecimalTextInputFormatter()
-                              ],
+                              inputFormatters: [DecimalTextInputFormatter()],
                               controller: quantityController,
                               onSubmitted: (String value) {
                                 setState(() {
@@ -97,7 +100,9 @@ class _RecipeeViewState extends State<RecipeeView> {
               Expanded(
                 child: FutureBuilder(builder: (context, snapshot) {
                   return new IngredientsView(
-                      ingredients: widget.ingredients, quantity: _quantity, callback: callback);
+                      ingredients: widget.ingredients,
+                      quantity: _quantity,
+                      callback: callback);
                 }),
               ),
             ],
@@ -130,24 +135,78 @@ class RecipeeList extends StatelessWidget {
                         offset: Offset(3, 3))
                   ],
                   color: Colors.white.withAlpha(215)),
-              child: new ListTile(
-                  title: Text(
-                    recipees[index].name,
-                    style: TextStyle(fontSize: 25),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 14,
+                    child: new ListTile(
+                        title: Text(
+                          recipees[index].name,
+                          style: TextStyle(fontSize: 25),
+                        ),
+                        //trailing: new Icon(Icons.edit),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RecipeeView(
+                                        name: recipees[index].name,
+                                        ingredients:
+                                            recipees[index].ingredients,
+                                      )));
+                        }),
                   ),
-                  //trailing: new Icon(Icons.edit),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RecipeeView(
-                                  name: recipees[index].name,
-                                  ingredients: recipees[index].ingredients,
-                                )));
-                  }),
+                  Expanded(
+                    flex: 2,
+                    child: IconButton(
+                        icon: Icon(Icons.edit), onPressed: _navigateToEditPage),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: IconButton(
+                        icon: Icon(Icons.delete), onPressed: _openDeletePrompt(context, recipees[index].id)),
+                  )
+                ],
+              ),
             ),
           );
         });
   }
-}
 
+  void _navigateToEditPage() {}
+
+  _openDeletePrompt(BuildContext context, int idRecipee) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancelar"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Borrar"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        DbHelper.instance.deleteReceta(idRecipee);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Eliminar Receta"),
+      content: Text("Está seguro que desea eliminar la receta?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+}

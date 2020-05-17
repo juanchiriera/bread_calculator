@@ -51,7 +51,7 @@ class _IngredientsViewState extends State<IngredientsView> {
                       offset: Offset(3, 3))
                 ],
               ),
-              child: new ListTile(
+              child: ListTile(
                 title: Container(
                   child: Row(
                     mainAxisSize: MainAxisSize.max,

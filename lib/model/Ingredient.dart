@@ -1,15 +1,18 @@
-import 'dart:ffi';
 
 class Ingredient {
-  final String name;
-  final double quantity;
+  int idRecipee;
+  String name;
+  double quantity;
+  int id;
+  Ingredient({this.name, this.quantity, this.id, this.idRecipee});
 
-  Ingredient({this.name, this.quantity});
-
-  factory Ingredient.fromJson(Map<String, dynamic> json) {
+  factory Ingredient.fromMap(Map<String, dynamic> json) {
     return new Ingredient(
-      name: json['name'] as String,
-      quantity: json['qty'] as double
-      );
+        name: json['name'] as String,
+        id: json['id'] as int,
+        idRecipee: json['idRecipee'] as int, 
+        quantity: json['quantity'] as double);
   }
+
+  Map<String, dynamic> toMap() => {"name": name, "quantity": quantity};
 }

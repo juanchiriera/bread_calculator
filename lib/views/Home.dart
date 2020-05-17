@@ -1,8 +1,8 @@
-import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:calculadora_de_pan/animations/HomeEnterAnimation.dart';
 import 'package:calculadora_de_pan/model/Recipee.dart';
+import 'package:calculadora_de_pan/utils/DbHelper.dart';
+import 'package:calculadora_de_pan/views/CreateRecipeeView.dart';
 import 'package:flutter/material.dart';
 
 import 'RecipeeView.dart';
@@ -54,6 +54,12 @@ class MainMenuView extends StatelessWidget {
       ),
       body: new AnimatedBuilder(
           animation: animation.controller, builder: _buildMainMenu),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openNewRecipee(context),
+        tooltip: 'Increment',
+        backgroundColor: Colors.white,
+        child: Icon(Icons.add, color: Colors.black,),
+      ),
     );
   }
 
@@ -84,13 +90,12 @@ class MainMenuView extends StatelessWidget {
             Expanded(
               child: Opacity(
                 opacity: animation.listOpacity.value,
-                              child: FutureBuilder(
-                    future: DefaultAssetBundle.of(context)
-                        .loadString('assets/recipees.json'),
+                child: FutureBuilder(
+                  //TODO: Leer las recetas de la BD!
+                    future:  DbHelper.instance.getAllRecipees(),
                     builder: (context, snapshot) {
-                      List<Recipee> recipees =
-                          parseJson(snapshot.data.toString());
-                      return recipees.isNotEmpty
+                      List<Recipee> recipees = snapshot.data as List<Recipee>;
+                      return recipees != null
                           ? new RecipeeList(recipees: recipees)
                           : new Center(child: new CircularProgressIndicator());
                     } // This trailing comma makes auto-formatting nicer for build methods.
@@ -101,12 +106,12 @@ class MainMenuView extends StatelessWidget {
         ));
   }
 
-  List<Recipee> parseJson(String response) {
-    if (response == null) {
-      return [];
-    }
-    final decoded = json.decode(response);
-    return decoded.map<Recipee>((json) => Recipee.fromJson(json)).toList();
+
+  Function _openNewRecipee (BuildContext context) {
+    return (() {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CreateRecetaView()));
+
+    });
   }
 }
-

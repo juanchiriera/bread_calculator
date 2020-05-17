@@ -1,17 +1,33 @@
+
+
 import 'Ingredient.dart';
 
 class Recipee {
-  final String name;
-  final List<Ingredient> ingredients;
+  int id;
+  String name;
+  List<Ingredient> ingredients;
 
-  Recipee({this.name, this.ingredients});
+  Recipee({this.id, this.name, this.ingredients});
 
-  factory Recipee.fromJson(Map<String, dynamic> json) {
-    var ingList = json['ingredients'] as List;
-    List<Ingredient> ingredients =
-        ingList.map((i) => Ingredient.fromJson(i)).toList();
-    return new Recipee(name: json['name'] as String, ingredients: ingredients);
+  factory Recipee.fromMap(Map<String, dynamic> recipeeMap, List<Ingredient> ingredients) {
+    /*if (recipeeMap['ingredients']) {
+      var ingList = recipeeMap['ingredients'] as List;
+      ingredients = ingList.map((i) => Ingredient.fromMap(i)).toList();
+    }*/
+    return new Recipee(name: recipeeMap['name'] as String, ingredients: ingredients);
+  }
+
+  Map<String, dynamic> toMap() {
+    List<Map> ingredients = this.ingredients.map((i) => i.toMap()).toList();
+    return {"name": name, "ingredients": ingredients};
+  }
+
+  static fromJson(recipeeMap) {
+    List<Ingredient> ingredients = new List();
+     if (recipeeMap['ingredients']) {
+      var ingList = recipeeMap['ingredients'] as List;
+      ingredients = ingList.map((i) => Ingredient.fromMap(i)).toList();
+    }
+    return new Recipee(name: recipeeMap['name'] as String, ingredients: ingredients);
   }
 }
-
-
