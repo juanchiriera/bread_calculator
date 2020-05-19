@@ -35,7 +35,8 @@ class _IngredientsViewState extends State<IngredientsView> {
     return new ListView.builder(
         itemCount: widget.ingredients == null ? 0 : widget.ingredients.length,
         itemBuilder: (BuildContext context, int index) {
-          var qty =(widget.ingredients[index].quantity * widget.quantity) / totalSum;
+          var qty =
+              (widget.ingredients[index].quantity * widget.quantity) / totalSum;
           return Padding(
             padding:
                 const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
@@ -58,9 +59,10 @@ class _IngredientsViewState extends State<IngredientsView> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: Text(
-                          widget.ingredients[index].quantity.toStringAsFixed(0) +
+                          widget.ingredients[index].quantity
+                                  .toStringAsFixed(0) +
                               "%",
                           style: TextStyle(fontSize: 22),
                           textAlign: TextAlign.left,
@@ -84,10 +86,12 @@ class _IngredientsViewState extends State<IngredientsView> {
                                 widget.ingredients[index].quantity;
                             widget.callback(newQuantity);
                           },
-                          controller: new TextEditingController(text: qty.toStringAsFixed(0)),
+                          controller: new TextEditingController(
+                              text: qty.toStringAsFixed(0)),
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               suffix: Text("grs"),
+                              border: InputBorder.none,
                               labelStyle: TextStyle(color: Colors.black)),
                           //qty.toDouble().toStringAsFixed(0) + " grs",
                           style: TextStyle(fontSize: 22),

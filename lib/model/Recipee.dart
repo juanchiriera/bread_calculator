@@ -14,8 +14,10 @@ class Recipee {
       var ingList = recipeeMap['ingredients'] as List;
       ingredients = ingList.map((i) => Ingredient.fromMap(i)).toList();
     }*/
-    return new Recipee(name: recipeeMap['name'] as String, ingredients: ingredients);
+    return new Recipee(name: recipeeMap['name'] as String, ingredients: ingredients, id: recipeeMap['id']);
   }
+
+  void addIngredient () => ingredients.add(new Ingredient());
 
   Map<String, dynamic> toMap() {
     List<Map> ingredients = this.ingredients.map((i) => i.toMap()).toList();

@@ -1,11 +1,10 @@
-import 'dart:js';
-
 import 'package:calculadora_de_pan/model/Ingredient.dart';
 import 'package:calculadora_de_pan/model/Recipee.dart';
 import 'package:calculadora_de_pan/utils/DbHelper.dart';
 import 'package:calculadora_de_pan/utils/DecimalTextInputFormatter.dart';
 import 'package:calculadora_de_pan/views/IngredientsView.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 import 'CreateRecipeeView.dart';
 
@@ -35,6 +34,19 @@ class _RecipeeViewState extends State<RecipeeView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.name),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                onTap: () {
+                  share(context, widget.name, widget.ingredients, _quantity);
+                },
+                child: Icon(
+                  Icons.share,
+                ),
+              ),
+            )
+          ],
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -80,6 +92,7 @@ class _RecipeeViewState extends State<RecipeeView> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                   suffix: Text("grs"),
+                                  border: InputBorder.none,
                                   labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(fontSize: 32.0),
                               inputFormatters: [DecimalTextInputFormatter()],
@@ -109,17 +122,37 @@ class _RecipeeViewState extends State<RecipeeView> {
           ),
         ));
   }
+
+  share(BuildContext context, String name, List<Ingredient> ingredients,
+      double quantity) {
+    var text = "$name\n\n";
+
+    var totalSum = 0;
+    for (var ingredient in ingredients) {
+      totalSum += ingredient.quantity.toInt();
+    }
+    for (var ingredient in ingredients) {
+      var amount = (ingredient.quantity * quantity) / totalSum;
+      text = text + "${ingredient.name}\t\t${amount.toStringAsFixed(0)} grs\n";
+    }
+    Share.share(text, subject: name);
+  }
 }
 
-class RecipeeList extends StatelessWidget {
+class RecipeeList extends StatefulWidget {
   final List<Recipee> recipees;
 
-  const RecipeeList({Key key, this.recipees}) : super(key: key);
+  RecipeeList({Key key, this.recipees}) : super(key: key);
 
+  @override
+  _RecipeeListState createState() => _RecipeeListState();
+}
+
+class _RecipeeListState extends State<RecipeeList> {
   @override
   Widget build(BuildContext context) {
     return new ListView.builder(
-        itemCount: recipees == null ? 0 : recipees.length,
+        itemCount: widget.recipees == null ? 0 : widget.recipees.length,
         itemBuilder: (BuildContext context, int index) {
           return Padding(
             padding:
@@ -141,7 +174,7 @@ class RecipeeList extends StatelessWidget {
                     flex: 14,
                     child: new ListTile(
                         title: Text(
-                          recipees[index].name,
+                          widget.recipees[index].name,
                           style: TextStyle(fontSize: 25),
                         ),
                         //trailing: new Icon(Icons.edit),
@@ -150,22 +183,56 @@ class RecipeeList extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => RecipeeView(
-                                        name: recipees[index].name,
+                                        name: widget.recipees[index].name,
                                         ingredients:
-                                            recipees[index].ingredients,
+                                            widget.recipees[index].ingredients,
                                       )));
                         }),
                   ),
                   Expanded(
                     flex: 2,
                     child: IconButton(
-                        icon: Icon(Icons.edit), onPressed: _navigateToEditPage),
+                        icon: Icon(Icons.edit),
+                        onPressed: _navigateToEditPage(
+                            context, widget.recipees[index])),
                   ),
                   Expanded(
-                    flex: 2,
-                    child: IconButton(
-                        icon: Icon(Icons.delete), onPressed: _openDeletePrompt(context, recipees[index].id)),
-                  )
+                      flex: 2,
+                      child: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Eliminar Receta"),
+                                  content: Text(
+                                      "Está seguro que desea eliminar la receta?"),
+                                  actions: [
+                                    FlatButton(
+                                      child: Text("Cancelar"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text("Borrar"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        DbHelper.instance.deleteReceta(
+                                            widget.recipees[index].id);
+                                        widget.recipees
+                                            .remove(widget.recipees[index]);
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          })
+                      //_openDeletePrompt(context, recipees[index].id)),
+                      )
                 ],
               ),
             ),
@@ -173,40 +240,12 @@ class RecipeeList extends StatelessWidget {
         });
   }
 
-  void _navigateToEditPage() {}
-
-  _openDeletePrompt(BuildContext context, int idRecipee) {
-    // set up the buttons
-    Widget cancelButton = FlatButton(
-      child: Text("Cancelar"),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-    Widget continueButton = FlatButton(
-      child: Text("Borrar"),
-      onPressed: () {
-        Navigator.of(context).pop();
-        DbHelper.instance.deleteReceta(idRecipee);
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Eliminar Receta"),
-      content: Text("Está seguro que desea eliminar la receta?"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
+  Function _navigateToEditPage(BuildContext context, Recipee recipee) {
+    return () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreateRecetaView(receta: recipee)));
+    };
   }
 }

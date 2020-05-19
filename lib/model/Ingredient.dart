@@ -14,5 +14,5 @@ class Ingredient {
         quantity: json['quantity'] as double);
   }
 
-  Map<String, dynamic> toMap() => {"name": name, "quantity": quantity};
+  Map<String, dynamic> toMap() => {"name": name, "quantity": quantity, "idRecipee": idRecipee, "id": id};
 }

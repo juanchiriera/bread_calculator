@@ -1,4 +1,3 @@
-
 import 'package:calculadora_de_pan/animations/HomeEnterAnimation.dart';
 import 'package:calculadora_de_pan/model/Recipee.dart';
 import 'package:calculadora_de_pan/utils/DbHelper.dart';
@@ -36,6 +35,7 @@ class _MyHomePageState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     return new MainMenuView(controller: _controller);
   }
 }
@@ -58,7 +58,10 @@ class MainMenuView extends StatelessWidget {
         onPressed: _openNewRecipee(context),
         tooltip: 'Increment',
         backgroundColor: Colors.white,
-        child: Icon(Icons.add, color: Colors.black,),
+        child: Icon(
+          Icons.add,
+          color: Colors.black,
+        ),
       ),
     );
   }
@@ -91,8 +94,8 @@ class MainMenuView extends StatelessWidget {
               child: Opacity(
                 opacity: animation.listOpacity.value,
                 child: FutureBuilder(
-                  //TODO: Leer las recetas de la BD!
-                    future:  DbHelper.instance.getAllRecipees(),
+                    //TODO: Leer las recetas de la BD!
+                    future: DbHelper.instance.getAllRecipees(),
                     builder: (context, snapshot) {
                       List<Recipee> recipees = snapshot.data as List<Recipee>;
                       return recipees != null
@@ -106,12 +109,10 @@ class MainMenuView extends StatelessWidget {
         ));
   }
 
-
-  Function _openNewRecipee (BuildContext context) {
+  Function _openNewRecipee(BuildContext context) {
     return (() {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => CreateRecetaView()));
-
+          context, MaterialPageRoute(builder: (context) => CreateRecetaView(receta:new Recipee(name:"", ingredients: List()))));
     });
   }
 }
