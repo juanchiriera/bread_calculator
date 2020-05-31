@@ -1,15 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:calculadora_de_pan/model/Ingredient.dart';
 import 'package:calculadora_de_pan/model/Recipee.dart';
+import 'package:calculadora_de_pan/utils/Migrations.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbHelper {
-  static final _dbName = "recipees.db";
-  static final _dbVersion = 2;
+  static final _dbName = "recipees_gm.db";
+  static final _dbVersion = MIGRATIONS.length+1;
 
   DbHelper._privateConstructor();
   static final DbHelper instance = DbHelper._privateConstructor();
@@ -27,26 +29,13 @@ class DbHelper {
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _dbName);
-    return await openDatabase(path, version: _dbVersion, onCreate: _onCreate);
+    return await openDatabase(path,
+        version: _dbVersion, onCreate: _onCreate, onUpgrade: _onUpgrade);
   }
 
   Future _onCreate(Database db, int version) async {
     //TODO: Hacer el primer INSERT
-    await db.execute('''
-      CREATE TABLE recipees (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE ingredients (
-        id INTEGER PRIMARY KEY,
-        idRecipee INTEGER,
-        name TEXT NOT NULL,
-        quantity DOUBLE NOT NULL,
-        FOREIGN KEY (idRecipee) REFERENCES recipees(id)
-      )
-    ''');
+    CREATE_DB.forEach((script) async => await db.execute(script));
     createBasicRecipees();
     //var dir = await rootBundle.loadString('assets/recipees.json');
     //List<Recipee> recipees = parseJson(dir);
@@ -63,11 +52,11 @@ class DbHelper {
 
   Future<int> deleteReceta(int id) async {
     Database db = await instance.database;
-    db.delete('ingredients', where: 'idRecipee = ?', whereArgs: [id]);
+    await db.delete('ingredients', where: 'idRecipee = ?', whereArgs: [id]);
     return await db.delete('recipees', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<int> insertReceta(Recipee recipee) async {
+  Future<int> insertOrUpdateReceta(Recipee recipee) async {
     Map<String, dynamic> recipeeRow = {"name": recipee.name};
     Database db = await instance.database;
     int idRecipee;
@@ -75,7 +64,7 @@ class DbHelper {
       //Is update
       idRecipee = recipee.id;
       db.delete('ingredients', where: 'idRecipee = ?', whereArgs: [recipee.id]);
-      db.update('recipees', recipeeRow);
+      db.update('recipees', recipeeRow, where: 'id = ?', whereArgs: [recipee.id]);
     } else {
       idRecipee = await db.insert('recipees', recipeeRow);
     }
@@ -127,7 +116,7 @@ class DbHelper {
     return db.delete('ingredients', where: 'id = ?', whereArgs: [id]);
   }
 
-  void createBasicRecipees() {
+  void createBasicRecipees() async {
     List<Ingredient> panBasicoIngredients = [
       Ingredient(name: "Harina 000 / panificable", quantity: 90),
       Ingredient(name: "Harina integral", quantity: 10),
@@ -136,37 +125,44 @@ class DbHelper {
       Ingredient(name: "Sal", quantity: 2)
     ];
     Recipee panBasico = new Recipee(
-      name: "Pan Básico",
+      name: "Pan Clásico de Masa Madre",
       ingredients: panBasicoIngredients,
     );
-    insertReceta(panBasico);
+    await insertOrUpdateReceta(panBasico);
 
     List<Ingredient> panSemiIntegralIngredients = [
-      Ingredient(name: "Agua", quantity: 78),
-      Ingredient(name: "Harina 000 / panificable", quantity: 77),
+      Ingredient(name: "Agua", quantity: 80),
+      Ingredient(name: "Harina 000 / Fuerza", quantity: 50),
       Ingredient(name: "Masa madre", quantity: 20),
-      Ingredient(name: "Harina integral", quantity: 10),
-      Ingredient(name: "Espelta integral", quantity: 10),
-      Ingredient(name: "Centeno integral", quantity: 3),
+      Ingredient(name: "Harina integral", quantity: 45),
+      Ingredient(name: "Centeno", quantity: 5),
       Ingredient(name: "Sal", quantity: 2)
     ];
     Recipee panSemiIntegral = new Recipee(
       name: "Pan Semi Integral",
       ingredients: panSemiIntegralIngredients,
     );
-    insertReceta(panSemiIntegral);
+    await insertOrUpdateReceta(panSemiIntegral);
 
     List<Ingredient> panCentenoIngredients = [
-      Ingredient(name: "Centeno Integral", quantity: 100),
-      Ingredient(name: "Agua", quantity: 100),
-      Ingredient(name: "Masa madre de Centeno", quantity: 100),
-      Ingredient(name: "Miel", quantity: 8),
-      Ingredient(name: "Sal", quantity: 3.2)
+      Ingredient(name: "Harina Integral", quantity: 80),
+      Ingredient(name: "Agua", quantity: 90),
+      Ingredient(name: "Masa madre", quantity: 20),
+      Ingredient(name: "Centeno", quantity: 10),
+      Ingredient(name: "Espelta/Trigo int.", quantity: 10),
+      Ingredient(name: "Sal", quantity: 2)
     ];
     Recipee panCenteno = new Recipee(
-      name: "Pan Básico",
+      name: "Pan Integral",
       ingredients: panCentenoIngredients,
     );
-    insertReceta(panCenteno);
+    await insertOrUpdateReceta(panCenteno);
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    //await db.delete("recipees");
+    //await db.delete("ingredients");
+    
+    //createBasicRecipees();
   }
 }

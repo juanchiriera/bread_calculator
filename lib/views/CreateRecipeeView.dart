@@ -48,7 +48,7 @@ class _CreateRecetaViewState extends State<CreateRecetaView> {
 
   Widget actionButtons(){
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.only(bottom: 60),
       child: Container(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -269,7 +269,7 @@ class _CreateRecetaViewState extends State<CreateRecetaView> {
 
   saveRecipee() async {
     //Recipee recipee = new Recipee(name: nombreReceta, ingredients: ingredientsList);
-    DbHelper.instance.insertReceta(widget.receta);
+    DbHelper.instance.insertOrUpdateReceta(widget.receta);
   }
 
   TextEditingController doubleNumberController(double value) {

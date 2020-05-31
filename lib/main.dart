@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 import 'utils/Constant.dart';
 import 'views/Home.dart';
+
+const String testDevice = 'MobileId';
 
 void main() => runApp(MyApp());
 
@@ -44,8 +47,38 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: testDevice != null ? <String>[testDevice] : null,
+    nonPersonalizedAds: true,
+    keywords: <String>['Game', 'Mario'],
+  );
   VideoPlayerController playerController;
   VoidCallback listener;
+
+  BannerAd _bannerAd;
+  InterstitialAd _interstitialAd;
+
+  BannerAd createBannerAd() {
+    return BannerAd(
+        adUnitId: BannerAd.testAdUnitId,
+      //Change BannerAd adUnitId with Admob ID
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("BannerAd $event");
+        });
+  }
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+        adUnitId: InterstitialAd.testAdUnitId,
+      //Change Interstitial AdUnitId with Admob ID
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("IntersttialAd $event");
+        });
+  }
+
 
   @override
   void initState() {
@@ -56,9 +89,14 @@ class _SplashScreenState extends State<SplashScreen> {
     initializeVideo();
     playerController.play();
 
-    ///video splash display only 5 second you can change the duration according to your need
     startTime();
+    FirebaseAdMob.instance.initialize(appId: BannerAd.testAdUnitId);
+    //Change appId With Admob Id
+    
+    super.initState();
   }
+
+ 
 
   void initializeVideo() {
     playerController =
@@ -72,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void navigationPage() {
     playerController.setVolume(0.0);
     playerController.removeListener(listener);
-    Navigator.of(context).pop(SPLASH_SCREEN);
+    //Navigator.of(context).pop(SPLASH_SCREEN);
     Navigator.of(context).pushReplacementNamed(HOME_SCREEN);
   }
 
@@ -83,6 +121,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show();
     return Scaffold(
         body: Stack(fit: StackFit.expand, children: <Widget>[
       new AspectRatio(
@@ -108,8 +149,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     if (playerController != null) playerController.dispose();
+    _bannerAd.dispose();
+    _interstitialAd.dispose();
     super.dispose();
   }
 }

@@ -54,15 +54,6 @@ class MainMenuView extends StatelessWidget {
       ),
       body: new AnimatedBuilder(
           animation: animation.controller, builder: _buildMainMenu),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openNewRecipee(context),
-        tooltip: 'Increment',
-        backgroundColor: Colors.white,
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-        ),
-      ),
     );
   }
 
@@ -94,7 +85,6 @@ class MainMenuView extends StatelessWidget {
               child: Opacity(
                 opacity: animation.listOpacity.value,
                 child: FutureBuilder(
-                    //TODO: Leer las recetas de la BD!
                     future: DbHelper.instance.getAllRecipees(),
                     builder: (context, snapshot) {
                       List<Recipee> recipees = snapshot.data as List<Recipee>;
@@ -105,6 +95,25 @@ class MainMenuView extends StatelessWidget {
                     ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 60, right: 20),
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    FloatingActionButton(
+                      onPressed: _openNewRecipee(context),
+                      tooltip: 'Increment',
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
         ));
   }
@@ -112,7 +121,10 @@ class MainMenuView extends StatelessWidget {
   Function _openNewRecipee(BuildContext context) {
     return (() {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => CreateRecetaView(receta:new Recipee(name:"", ingredients: List()))));
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreateRecetaView(
+                  receta: new Recipee(name: "", ingredients: List()))));
     });
   }
 }
