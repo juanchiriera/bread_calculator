@@ -110,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void navigationPage() {
     playerController.setVolume(0.0);
     playerController.removeListener(listener);
-    Navigator.of(context).pop(SPLASH_SCREEN);
+    //Navigator.of(context).popAndPushNamed(SPLASH_SCREEN);
     Navigator.of(context).pushReplacementNamed(HOME_SCREEN);
   }
 

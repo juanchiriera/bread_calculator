@@ -207,11 +207,11 @@ class _CreateRecetaViewState extends State<CreateRecetaView> {
                   child: TextField(
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
-                        labelText: 'Proporcion',
+                        labelText: 'Proporción',
                         suffix: Text("%"),
                         border: InputBorder.none,
                         labelStyle: TextStyle(color: Colors.deepOrange),
-                        hintText: "proporcion"),
+                        hintText: "proporción"),
                     controller: doubleNumberController(widget.receta.ingredients[index].quantity),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {

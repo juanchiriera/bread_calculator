@@ -79,7 +79,7 @@ class _RecipeeViewState extends State<RecipeeView> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10, right: 15),
                           child: Text(
-                            "Cantidad: ",
+                            "Peso Masa: ",
                             style: TextStyle(fontSize: 32.0),
                           ),
                         ),
@@ -111,12 +111,15 @@ class _RecipeeViewState extends State<RecipeeView> {
                 ),
               ),
               Expanded(
-                child: FutureBuilder(builder: (context, snapshot) {
-                  return new IngredientsView(
-                      ingredients: widget.ingredients,
-                      quantity: _quantity,
-                      callback: callback);
-                }),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 50),
+                  child: FutureBuilder(builder: (context, snapshot) {
+                    return new IngredientsView(
+                        ingredients: widget.ingredients,
+                        quantity: _quantity,
+                        callback: callback);
+                  }),
+                ),
               ),
             ],
           ),
